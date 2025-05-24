@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35931.197 d17.13
+VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PharmaDrop.API", "PharmaDrop.API\PharmaDrop.API.csproj", "{C9D5687A-3C6F-4A67-BAEE-7FBC960CF6C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PharmaDrop.Aplication", "PharmaDrop.Aplication\PharmaDrop.Aplication.csproj", "{4B16AF72-B36E-40A6-B48A-9A7A2F3CE94C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PharmaDrop.Application", "PharmaDrop.Aplication\PharmaDrop.Application.csproj", "{4B16AF72-B36E-40A6-B48A-9A7A2F3CE94C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PharmaDrop.Core", "PharmaDrop.Core\PharmaDrop.Core.csproj", "{84A7B5B2-71A7-426A-BB57-0C9FB69A0218}"
 EndProject
