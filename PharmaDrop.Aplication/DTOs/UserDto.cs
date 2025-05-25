@@ -49,5 +49,7 @@ namespace PharmaDrop.Aplication.DTOs
         public string Password { get; set; }
     }
 
+    public record UserOtpDto(string otp);
+
         
     }

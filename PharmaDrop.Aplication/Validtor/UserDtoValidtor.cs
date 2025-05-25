@@ -12,31 +12,31 @@ namespace PharmaDrop.Aplication.Validtor
     {
         public UserDtoValidtor()
         {
-            RuleFor(x => x.FirstName)
+            RuleFor(f => f.FirstName)
             .NotEmpty().WithMessage("First name is required.")
             .MaximumLength(50).WithMessage("First name must not exceed 50 characters.");
 
-            RuleFor(x => x.LastName)
+            RuleFor(l => l.LastName)
                 .NotEmpty().WithMessage("Last name is required.")
                 .MaximumLength(50).WithMessage("Last name must not exceed 50 characters.");
 
-            RuleFor(x => x.Email)
+            RuleFor(e => e.Email)
                 .NotEmpty().WithMessage("Email is required.")
                 .EmailAddress().WithMessage("Invalid email format.");
 
-            RuleFor(x => x.Phone)
+            RuleFor(p => p.Phone)
                 .NotEmpty().WithMessage("Phone number is required.")
                 .Matches(@"^\+?[0-9]{10,15}$").WithMessage("Invalid phone number format.");
 
-            RuleFor(x => x.BirthDay)
+            RuleFor(b => b.BirthDay)
                 .NotEmpty().WithMessage("Birth date is required.")
                 .LessThan(DateTime.Now).WithMessage("Birth date must be in the past.");
 
-            RuleFor(x => x.Password)
+            RuleFor(p => p.Password)
                 .NotEmpty().WithMessage("Password is required.")
                 .MinimumLength(6).WithMessage("Password must be at least 6 characters long.");
 
-            RuleFor(x => x.ConfirmPassword)
+            RuleFor(cp => cp.ConfirmPassword)
                 .Equal(x => x.Password).WithMessage("Passwords do not match.");
      
         }

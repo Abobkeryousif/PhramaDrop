@@ -5,6 +5,7 @@ using PharmaDrop.Aplication.Validtor;
 using FluentValidation;
 using Microsoft.AspNetCore.RateLimiting;
 using PharmaDrop.Application.Validtor;
+using PharmaDrop.Core.Common;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +22,7 @@ builder.Services.AddControllers().AddFluentValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<UserDtoValidtor>();
 builder.Services.AddValidatorsFromAssemblyContaining<UpdateUserDtoValidtor>();
 builder.Services.AppRegister();
+builder.Services.Configure<MailSetting>(builder.Configuration.GetSection("MailSetting"));
 
 builder.Services.AddRateLimiter(limit=> 
 {

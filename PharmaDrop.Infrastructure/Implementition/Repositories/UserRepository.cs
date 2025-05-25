@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PharmaDrop.Infrastructure.Implementition
+namespace PharmaDrop.Infrastructure.Implementition.Repositories
 {
     public class UserRepository : GenericRepository<User>, IUserRepository
     {

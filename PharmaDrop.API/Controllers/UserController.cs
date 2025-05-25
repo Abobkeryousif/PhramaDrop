@@ -20,6 +20,12 @@ namespace PharmaDrop.API.Controllers
         public async Task<IActionResult> RegisterAsync(UserDto userDto) =>
         Ok(await _sender.Send(new RegisterUserCommand(userDto)));
 
+
+        [HttpPost("Complete-Register")]
+
+        public async Task<IActionResult> CompleteRegisterAsync(UserOtpDto user) =>
+            Ok(await _sender.Send(new CompleteRegisterCommand(user)));
+
         [HttpGet]
         public async Task<IActionResult> GetAllUser() =>
             Ok(await _sender.Send(new GetUsersQuery()));

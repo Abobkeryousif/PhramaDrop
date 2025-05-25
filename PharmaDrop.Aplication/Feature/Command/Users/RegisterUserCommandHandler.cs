@@ -2,13 +2,17 @@
 using MediatR;
 using PharmaDrop.Aplication.Contract.Interfaces;
 using PharmaDrop.Aplication.DTOs;
+using PharmaDrop.Application.Contract.Interfaces;
+using PharmaDrop.Application.Contract.Services;
 using PharmaDrop.Core.Common;
 using PharmaDrop.Core.Entities;
+using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace PharmaDrop.Aplication.Feature.Command.Users
@@ -18,10 +22,15 @@ namespace PharmaDrop.Aplication.Feature.Command.Users
     {
         private readonly IUnitofWork _unitofWork;
         private readonly IMapper _mapper;
-        public RegisterUserCommandHandler(IUnitofWork unitofWork, IMapper mapper)
+        private readonly ISendEmailServices _sendEmail;
+        private readonly IOtpRepository _otoRepository;
+        
+        public RegisterUserCommandHandler(IUnitofWork unitofWork, IMapper mapper, ISendEmailServices sendEmail, IOtpRepository otoRepository)
         {
             _unitofWork = unitofWork;
             _mapper = mapper;
+            _sendEmail = sendEmail;
+            _otoRepository = otoRepository;
         }
 
         public async Task<HttpResponse<UserDto>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
@@ -34,7 +43,23 @@ namespace PharmaDrop.Aplication.Feature.Command.Users
             user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
             await _unitofWork.UserRepository.CreateAsync(user);
 
-            return new HttpResponse<UserDto>(HttpStatusCode.OK,$"Seccuss Add User {user.UserName}",request.userDto);
+            Random random = new Random();
+            int otp = random.Next(0, 99999);
+
+            var confiermOTP = new OTP
+            {
+                Id = Guid.NewGuid(),
+                IsUsed = false,
+                UserEmail = user.Email,
+                ExpirationOn = DateTime.Now.AddMinutes(5),
+                otp = otp.ToString("00000"),
+            };
+            
+            _sendEmail.SendEmail(user.Email , "Confierm Account", $"OTP Code: {confiermOTP.otp}");
+            await _otoRepository.CreateAsync(confiermOTP);
+
+
+            return new HttpResponse<UserDto>(HttpStatusCode.OK,$"We Send OTP In Your Email Plaese Confierm It {user.UserName}",request.userDto);
 
         }
     }

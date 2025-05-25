@@ -8,7 +8,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PharmaDrop.Infrastructure.Implementition
+namespace PharmaDrop.Infrastructure.Implementition.Repositories
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
