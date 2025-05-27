@@ -23,7 +23,6 @@ namespace PharmaDrop.Infrastructure.DependenctInjection
             services.AddDbContext<ApplicationDbContext>(s => s.UseSqlServer(configuration.GetConnectionString("Default")));
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IUnitofWork, UnitofWork>();
-            services.AddScoped<IUserRepository, UserRepository>();
             services.AddTransient<ISendEmailServices, SendEmailServices>();
 
             services.AddSingleton<IConnectionMultiplexer>(r =>
@@ -32,7 +31,7 @@ namespace PharmaDrop.Infrastructure.DependenctInjection
                 return ConnectionMultiplexer.Connect(config);
             });
 
-            services.AddScoped<IOtpRepository , OtpRepository>();
+  
 
             return services;
         }

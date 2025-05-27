@@ -15,17 +15,15 @@ namespace PharmaDrop.Application.Feature.Command.Users
     public record CompleteRegisterCommand(UserOtpDto userOtp) : IRequest<HttpResponse<string>>;
     public class CompleteRegisterCommandHandler : IRequestHandler<CompleteRegisterCommand, HttpResponse<string>>
     {
-        private readonly IUserRepository _userRepository;
-        private readonly IOtpRepository _otpRepository;
-        public CompleteRegisterCommandHandler(IUserRepository userRepository, IOtpRepository otpRepository)
+        private readonly IUnitofWork _unitofWork;
+        public CompleteRegisterCommandHandler(IUnitofWork unitofWork)
         {
-            _userRepository = userRepository;
-            _otpRepository = otpRepository;
+            _unitofWork = unitofWork;
         }
 
         public async Task<HttpResponse<string>> Handle(CompleteRegisterCommand request, CancellationToken cancellationToken)
         {
-            var otp = await _otpRepository.FirstOrDefaultAsync(o=> o.otp == request.userOtp.otp);
+            var otp = await _unitofWork.otpRepository.FirstOrDefaultAsync(o=> o.otp == request.userOtp.otp);
             if (otp == null)
                 return new HttpResponse<string>(HttpStatusCode.NotFound,"Plaese Enter True OTP");
 
@@ -35,12 +33,12 @@ namespace PharmaDrop.Application.Feature.Command.Users
             if (otp.IsUsed)
                 return new HttpResponse<string>(HttpStatusCode.BadRequest, "OTP Already Used");
 
-            var user = await _userRepository.FirstOrDefaultAsync(u=> u.Email == otp.UserEmail);
+            var user = await _unitofWork.UserRepository.FirstOrDefaultAsync(u=> u.Email == otp.UserEmail);
             user.IsActive = true;
             
 
-            await _userRepository.UpdateAsync(user);
-            await _otpRepository.DeleteAsync(otp);
+            await _unitofWork.UserRepository.UpdateAsync(user);
+            await _unitofWork.otpRepository.DeleteAsync(otp);
 
             return new HttpResponse<string>(HttpStatusCode.OK,"Seccuss Complete Register Plaese Go To Login !",$"Mr: {user.UserName}");
         }

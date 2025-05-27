@@ -23,14 +23,14 @@ namespace PharmaDrop.Aplication.Feature.Command.Users
         private readonly IUnitofWork _unitofWork;
         private readonly IMapper _mapper;
         private readonly ISendEmailServices _sendEmail;
-        private readonly IOtpRepository _otoRepository;
+ 
         
-        public RegisterUserCommandHandler(IUnitofWork unitofWork, IMapper mapper, ISendEmailServices sendEmail, IOtpRepository otoRepository)
+        public RegisterUserCommandHandler(IUnitofWork unitofWork, IMapper mapper, ISendEmailServices sendEmail)
         {
             _unitofWork = unitofWork;
             _mapper = mapper;
             _sendEmail = sendEmail;
-            _otoRepository = otoRepository;
+    
         }
 
         public async Task<HttpResponse<UserDto>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
@@ -56,7 +56,7 @@ namespace PharmaDrop.Aplication.Feature.Command.Users
             };
             
             _sendEmail.SendEmail(user.Email , "Confierm Account", $"OTP Code: {confiermOTP.otp}");
-            await _otoRepository.CreateAsync(confiermOTP);
+            await _unitofWork.otpRepository.CreateAsync(confiermOTP);
 
 
             return new HttpResponse<UserDto>(HttpStatusCode.OK,$"We Send OTP In Your Email Plaese Confierm It {user.UserName}",request.userDto);
