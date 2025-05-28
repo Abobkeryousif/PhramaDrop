@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,5 +16,15 @@ namespace PharmaDrop.Application.DTOs
         public string Manufacturer { get; set; }
         public DateTime ExpiryDate => DateTime.UtcNow.AddYears(2);
         public int CategoryId { get; set; }
+
+        public IFormFileCollection Photo {  get; set; }
     }
+
+    public record GetByNameProductDto(string Name);
+
+    public class UpdateProductDto : ProductDto 
+    {
+        public int Id { get; set; }
+    }
+
 }

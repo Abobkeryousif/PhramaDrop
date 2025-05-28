@@ -13,5 +13,7 @@ namespace PharmaDrop.Aplication.Contract.Interfaces
         public IOtpRepository otpRepository { get; }
 
         public ICategoryRepository categoryRepository { get; }
+
+        public IProductRepository productRepository { get; }
     }
 }

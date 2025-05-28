@@ -1,5 +1,7 @@
-﻿using PharmaDrop.Aplication.Contract.Interfaces;
+﻿using AutoMapper;
+using PharmaDrop.Aplication.Contract.Interfaces;
 using PharmaDrop.Application.Contract.Interfaces;
+using PharmaDrop.Application.Contract.Services;
 using PharmaDrop.Infrastructure.Data;
 using System;
 using System.Collections.Generic;
@@ -13,18 +15,26 @@ namespace PharmaDrop.Infrastructure.Implementition.Repositories
         
     {
         private readonly ApplicationDbContext _context;
-        public UnitofWork(ApplicationDbContext context)
+        private readonly IMapper _mapper;
+        private readonly IImageServices _imageServices;
+
+        public UnitofWork(ApplicationDbContext context, IMapper mapper, IImageServices imageServices)
         {
             _context = context;
             UserRepository = new UserRepository(context);
             otpRepository = new OtpRepository(context);
             categoryRepository = new CategoryRepository(context);
+            productRepository = new ProductRepostory(context,mapper,imageServices);
+            _mapper = mapper;
+            _imageServices = imageServices;
         }
-         public IUserRepository UserRepository { get; }
+        public IUserRepository UserRepository { get; }
 
         public IOtpRepository otpRepository {  get; }
 
         public ICategoryRepository categoryRepository {  get; }
+
+        public IProductRepository productRepository { get; }
     }
 
    
