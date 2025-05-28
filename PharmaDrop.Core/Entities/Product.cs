@@ -19,5 +19,7 @@ namespace PharmaDrop.Core.Entities
         public Category Category { get; set; }
 
         public List<Photo> photos { get; set; }
+
+        public QRcode QRcode { get; set; }
     }
 }

@@ -21,6 +21,7 @@ namespace PharmaDrop.Infrastructure.DependenctInjection
             services.AddTransient<ISendEmailServices, SendEmailServices>();
             services.AddSingleton<IImageServices, ImageServices>();
             services.AddSingleton<IFileProvider>(new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(),"wwwroot")));
+            services.AddTransient<IQRcodeServices, QRcodeServices>();
             return services;
         }
     }

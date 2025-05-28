@@ -5,11 +5,7 @@ using PharmaDrop.Application.Contract.Services;
 using PharmaDrop.Application.DTOs;
 using PharmaDrop.Core.Entities;
 using PharmaDrop.Infrastructure.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using PharmaDrop.Infrastructure.Implementition.Services;
 
 namespace PharmaDrop.Infrastructure.Implementition.Repositories
 {
@@ -18,11 +14,13 @@ namespace PharmaDrop.Infrastructure.Implementition.Repositories
         private readonly ApplicationDbContext context;
         private readonly IMapper mapper;
         private readonly IImageServices _imageServices;
-        public ProductRepostory(ApplicationDbContext context, IMapper mapper, IImageServices imageServices) : base(context)
+        private readonly IQRcodeServices _qRcodeServices;
+        public ProductRepostory(ApplicationDbContext context, IMapper mapper, IImageServices imageServices, IQRcodeServices qRcodeServices) : base(context)
         {
             this.context = context;
             this.mapper = mapper;
             _imageServices = imageServices;
+            _qRcodeServices = qRcodeServices;
         }
 
         public async Task<bool> CreateAsync(ProductDto productDto)
@@ -42,6 +40,26 @@ namespace PharmaDrop.Infrastructure.Implementition.Repositories
 
             await context.AddRangeAsync(photo);
             await context.SaveChangesAsync();
+
+            ProductDetailsQRcode details = new ProductDetailsQRcode
+            {
+                Name = product.Name,
+                Price = product.NewPrice,
+                Manufacturer = product.Manufacturer,
+            };
+
+            var QRcode = _qRcodeServices.GenerateQRcode(details);
+            var result = ConvertBytesToBase64(QRcode);
+
+            var Qr = new QRcode
+            {
+                ProductQRcode = result,
+                ProductId = product.Id,
+            };
+
+
+            context.Add(Qr);
+            context.SaveChanges();
 
             return true;
         }
@@ -72,6 +90,14 @@ namespace PharmaDrop.Infrastructure.Implementition.Repositories
             await context.AddRangeAsync(photo);
             await context.SaveChangesAsync();
             return true;
+        }
+
+        private string ConvertBytesToBase64(byte[] byteArray)
+        {
+            if (byteArray == null || byteArray.Length == 0)
+                return string.Empty;
+
+            return Convert.ToBase64String(byteArray);
         }
     }
 }

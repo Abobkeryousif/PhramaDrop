@@ -27,4 +27,12 @@ namespace PharmaDrop.Application.DTOs
         public int Id { get; set; }
     }
 
+    public record ProductDetailsQRcode 
+    {
+        public string Name { get; set; }
+        public decimal Price { get; set; }
+        public string Manufacturer { get; set; }
+        public DateTime ExpiryDate => DateTime.UtcNow.AddYears(2);
+     }
+         
 }
