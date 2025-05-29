@@ -1,5 +1,6 @@
 ﻿using PharmaDrop.Aplication.Contract.Interfaces;
 using PharmaDrop.Application.DTOs;
+using PharmaDrop.Core.Common;
 using PharmaDrop.Core.Entities;
 using System;
 using System.Collections.Generic;
@@ -13,5 +14,6 @@ namespace PharmaDrop.Application.Contract.Interfaces
     {
         Task<bool> CreateAsync(ProductDto productDto);
         Task<bool> UpdateAsync(UpdateProductDto updateProductDto);
+        Task<List<Product>> GetAllAsync(QueryPramater query);
     }
 }

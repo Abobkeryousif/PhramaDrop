@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PharmaDrop.Application.DTOs;
 using PharmaDrop.Application.Feature.Command.Products;
 using PharmaDrop.Application.Feature.Query.Products;
+using PharmaDrop.Core.Common;
 
 namespace PharmaDrop.API.Controllers
 {
@@ -20,8 +21,8 @@ namespace PharmaDrop.API.Controllers
             Ok(await _sender.Send(new CreateProductCommand(productDto)));
 
         [HttpGet]
-        public async Task<IActionResult> GetProductsAllAsync() =>
-            Ok(await _sender.Send(new GetProductsQuery()));
+        public async Task<IActionResult> GetProductsAllAsync([FromQuery]QueryPramater pramater) =>
+            Ok(await _sender.Send(new GetProductsQuery(pramater)));
 
         [HttpGet("Get-By-Name")]
         public async Task<IActionResult> GetByNameProductAsync(GetByNameProductDto productDto) =>

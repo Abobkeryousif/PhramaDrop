@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using PharmaDrop.Application.Contract.Interfaces;
 using PharmaDrop.Application.Contract.Services;
 using PharmaDrop.Application.DTOs;
+using PharmaDrop.Core.Common;
 using PharmaDrop.Core.Entities;
 using PharmaDrop.Infrastructure.Data;
 using PharmaDrop.Infrastructure.Implementition.Services;
@@ -64,6 +65,44 @@ namespace PharmaDrop.Infrastructure.Implementition.Repositories
             return true;
         }
 
+        public async Task<List<Product>> GetAllAsync(QueryPramater query)
+        {
+            var products = await context.Products.ToListAsync(); 
+
+     
+            if (!string.IsNullOrWhiteSpace(query.Search))
+            {
+                products = products
+                    .Where(p => p.Name.Contains(query.Search, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+            }
+
+       
+            if (!string.IsNullOrEmpty(query.SortBy))
+            {
+                if (query.SortBy.Equals("NewPrice", StringComparison.OrdinalIgnoreCase))
+                {
+                    products = query.IsDescending
+                        ? products.OrderByDescending(p => p.NewPrice).ToList()
+                        : products.OrderBy(p => p.NewPrice).ToList();
+                }
+                else
+                {
+                    products = query.IsDescending
+                        ? products.OrderByDescending(p => GetPropertyValue(p, query.SortBy)).ToList()
+                        : products.OrderBy(p => GetPropertyValue(p, query.SortBy)).ToList();
+                }
+            }
+
+     
+            products = products
+                .Skip((query.PageNumber - 1) * query.PageSize)
+                .Take(query.PageSize)
+                .ToList();
+
+            return products;
+        }
+
         public async Task<bool> UpdateAsync(UpdateProductDto updateProductDto)
         {
             if (updateProductDto == null) return false;
@@ -98,6 +137,11 @@ namespace PharmaDrop.Infrastructure.Implementition.Repositories
                 return string.Empty;
 
             return Convert.ToBase64String(byteArray);
+        }
+
+        private object? GetPropertyValue(Product product, string propertyName)
+        {
+            return typeof(Product).GetProperty(propertyName)?.GetValue(product, null);
         }
     }
 }
