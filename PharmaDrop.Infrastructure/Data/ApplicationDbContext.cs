@@ -14,16 +14,15 @@ namespace PharmaDrop.Infrastructure.Data
         public ApplicationDbContext(DbContextOptions options) : base(options) 
         {
         }
-        
-        //اضيف جدول الqr واعدل الشغل
-
+       
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<OTP> OTPs { get; set; }
         public virtual DbSet<Category> Categories { get; set; }
         public virtual DbSet<Product> Products { get; set; }
         public virtual DbSet<Photo> Photos { get; set; }
-
         public virtual DbSet<QRcode> QRcodes { get; set; }
+        public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

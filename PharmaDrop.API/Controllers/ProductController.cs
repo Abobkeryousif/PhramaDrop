@@ -1,9 +1,12 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using PharmaDrop.Aplication.Contract.Interfaces;
+using PharmaDrop.Application.Contract.Interfaces;
 using PharmaDrop.Application.DTOs;
 using PharmaDrop.Application.Feature.Command.Products;
 using PharmaDrop.Application.Feature.Query.Products;
 using PharmaDrop.Core.Common;
+using PharmaDrop.Core.Entities;
 
 namespace PharmaDrop.API.Controllers
 {
@@ -12,17 +15,25 @@ namespace PharmaDrop.API.Controllers
     public class ProductController : ControllerBase
     {
         private readonly ISender _sender;
-
-        public ProductController(ISender sender)=>
-        _sender = sender;
+        private readonly IUnitofWork _unitofWork;
+        public ProductController(ISender sender, IUnitofWork unitofWork)
+        {
+            _sender = sender;
+            _unitofWork = unitofWork;
+        }
 
         [HttpPost("Create")]
         public async Task<IActionResult> CraeteAsync(ProductDto productDto) =>
             Ok(await _sender.Send(new CreateProductCommand(productDto)));
 
         [HttpGet]
-        public async Task<IActionResult> GetProductsAllAsync([FromQuery]QueryPramater pramater) =>
-            Ok(await _sender.Send(new GetProductsQuery(pramater)));
+        
+        public async Task<IActionResult> GetAllAsync(string? filterOn , string? filterQuery,string? sortBy, bool? isAscending,
+            int pageNumber=1,int pageSize=20) 
+        {
+            var result = await _unitofWork.productRepository.GetAllAsync(filterOn, filterQuery,sortBy,isAscending ?? true,pageNumber,pageSize);
+            return Ok(result);
+        } 
 
         [HttpGet("Get-By-Name")]
         public async Task<IActionResult> GetByNameProductAsync(GetByNameProductDto productDto) =>

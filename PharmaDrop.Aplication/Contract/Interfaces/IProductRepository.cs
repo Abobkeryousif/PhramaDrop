@@ -14,6 +14,7 @@ namespace PharmaDrop.Application.Contract.Interfaces
     {
         Task<bool> CreateAsync(ProductDto productDto);
         Task<bool> UpdateAsync(UpdateProductDto updateProductDto);
-        Task<List<Product>> GetAllAsync(QueryPramater query);
+        Task<List<Product>> GetAllAsync(string? filterOn = null, string? filterQuery = null, string? sortBy = null, bool isAscending = true, 
+            int pageNumber = 1, int pageSize = 20);
     }
 }

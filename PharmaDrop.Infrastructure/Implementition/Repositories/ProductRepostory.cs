@@ -65,42 +65,38 @@ namespace PharmaDrop.Infrastructure.Implementition.Repositories
             return true;
         }
 
-        public async Task<List<Product>> GetAllAsync(QueryPramater query)
+        public async Task<List<Product>> GetAllAsync(string? filterOn = null, string? filterQuery = null, string? sortBy = null, bool isAscending = true,
+            int pageNumber = 1, int pageSize = 20)
         {
-            var products = await context.Products.ToListAsync(); 
-
-     
-            if (!string.IsNullOrWhiteSpace(query.Search))
+            //filter
+            var product =  context.Products.AsQueryable();
+            if(string.IsNullOrWhiteSpace(filterOn) == false && string.IsNullOrWhiteSpace(filterQuery) == false)
             {
-                products = products
-                    .Where(p => p.Name.Contains(query.Search, StringComparison.OrdinalIgnoreCase))
-                    .ToList();
-            }
-
-       
-            if (!string.IsNullOrEmpty(query.SortBy))
-            {
-                if (query.SortBy.Equals("NewPrice", StringComparison.OrdinalIgnoreCase))
+                if (filterOn.Equals("Name", StringComparison.OrdinalIgnoreCase))
                 {
-                    products = query.IsDescending
-                        ? products.OrderByDescending(p => p.NewPrice).ToList()
-                        : products.OrderBy(p => p.NewPrice).ToList();
-                }
-                else
-                {
-                    products = query.IsDescending
-                        ? products.OrderByDescending(p => GetPropertyValue(p, query.SortBy)).ToList()
-                        : products.OrderBy(p => GetPropertyValue(p, query.SortBy)).ToList();
+                    product = product.Where(n=> n.Name.Contains(filterQuery));
                 }
             }
 
-     
-            products = products
-                .Skip((query.PageNumber - 1) * query.PageSize)
-                .Take(query.PageSize)
-                .ToList();
+            //sorting
+            if(string.IsNullOrWhiteSpace(sortBy) == false)
+            {
+                if (sortBy.Equals("Name", StringComparison.OrdinalIgnoreCase)) 
+                {
+                    product = isAscending ? product.OrderBy(n=> n.Name) : product.OrderByDescending(n=> n.Name);
+                }
 
-            return products;
+                else if (sortBy.Equals("NewPrice", StringComparison.OrdinalIgnoreCase)) 
+                {
+                    product = isAscending ? product.OrderBy(np => np.NewPrice) : product.OrderByDescending(np => np.NewPrice);
+                }
+            }
+
+            //Pagenation
+            var skipProduct = (pageNumber - 1) * pageSize;
+             
+
+            return await product.Skip(skipProduct).Take(pageSize).ToListAsync();
         }
 
         public async Task<bool> UpdateAsync(UpdateProductDto updateProductDto)
