@@ -10,6 +10,7 @@ using PharmaDrop.Infrastructure.Implementition.Repositories;
 using PharmaDrop.Infrastructure.Implementition.Services;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using PharmaDrop.Application.Contract.Interfaces;
 
 namespace PharmaDrop.Infrastructure.DependenctInjection
 {
@@ -36,6 +37,7 @@ namespace PharmaDrop.Infrastructure.DependenctInjection
                   IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Token:Key"]))
               });
             services.AddScoped<ITokenServices, TokenServices>();
+            services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
             return services;
         }
     }

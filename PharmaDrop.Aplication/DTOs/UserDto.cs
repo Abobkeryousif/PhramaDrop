@@ -15,7 +15,6 @@ namespace PharmaDrop.Aplication.DTOs
         public string UserName => $"{FirstName} {LastName}";
         public string Email { get; set; }
         public string Phone { get; set; }
-        public bool IsActive { get; set; } = false;
         public DateTime BirthDay { get; set; }
         public string Password { get; set; }
 
@@ -50,6 +49,12 @@ namespace PharmaDrop.Aplication.DTOs
     }
 
     public record UserOtpDto(string otp);
+
+    public record LoginUserDto
+    {
+        public string Email { get; set; }
+        public string Password { get; set; }
+    }
 
         
     }

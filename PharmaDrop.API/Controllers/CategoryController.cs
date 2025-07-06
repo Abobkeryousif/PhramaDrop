@@ -6,6 +6,7 @@ using PharmaDrop.Application.DTOs;
 using PharmaDrop.Application.Feature.Command.Categories;
 using PharmaDrop.Application.Feature.Command.Categorys;
 using PharmaDrop.Application.Feature.Query.Categories;
+using PharmaDrop.Application.Feature.Query.Categories.PharmaDrop.Application.Feature.Query.Categories;
 
 namespace PharmaDrop.API.Controllers
 {
@@ -28,8 +29,10 @@ namespace PharmaDrop.API.Controllers
             Ok(await _sender.Send(new GetCategoriesQuery()));
 
         [HttpGet("Get-By-Id")]
-        public async Task<IActionResult> GetByIdCategoryAsync(int Id) =>
-            Ok(await _sender.Send(new GetByIdCategoryQuery(Id)));
+        public async Task<IActionResult> GetByIdCategoryAsync(int Id) 
+        {
+            return Ok(await _sender.Send(new GetByIdCategoryQuery(Id)));
+        }
 
         [HttpPut("Update")]
 

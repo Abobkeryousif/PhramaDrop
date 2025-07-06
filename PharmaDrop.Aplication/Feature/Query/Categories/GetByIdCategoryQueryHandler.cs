@@ -2,29 +2,49 @@
 using PharmaDrop.Aplication.Contract.Interfaces;
 using PharmaDrop.Core.Common;
 using PharmaDrop.Core.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace PharmaDrop.Application.Feature.Query.Categories
 {
-    public record GetByIdCategoryQuery(int Id) : IRequest<HttpResponse<Category>>;
-    public class GetByIdCategoryQueryHandler : IRequestHandler<GetByIdCategoryQuery, HttpResponse<Category>>
+    using Microsoft.Extensions.Logging;
+
+    namespace PharmaDrop.Application.Feature.Query.Categories
     {
-        private readonly IUnitofWork _unitofWork;
+        public record GetByIdCategoryQuery(int Id) : IRequest<HttpResponse<Category>>;
 
-        public GetByIdCategoryQueryHandler(IUnitofWork unitofWork)=>
-        _unitofWork = unitofWork;
-        public async Task<HttpResponse<Category>> Handle(GetByIdCategoryQuery request, CancellationToken cancellationToken)
+        public class GetByIdCategoryQueryHandler : IRequestHandler<GetByIdCategoryQuery, HttpResponse<Category>>
         {
-            var category = await _unitofWork.categoryRepository.FirstOrDefaultAsync(c=> c.Id == request.Id);
-            if (category == null)
-                return new HttpResponse<Category>(HttpStatusCode.NotFound,$"Not Found With ID: {request.Id}");
+            private readonly IUnitofWork _unitofWork;
+            private readonly ILogger<GetByIdCategoryQueryHandler> _logger;
 
-            return new HttpResponse<Category>(HttpStatusCode.OK,"Seccuss Opration",category);
-        }
-    }
-}
+            public GetByIdCategoryQueryHandler(IUnitofWork unitofWork, ILogger<GetByIdCategoryQueryHandler> logger)
+            {
+                _unitofWork = unitofWork;
+                _logger = logger;
+            }
+
+            public async Task<HttpResponse<Category>> Handle(GetByIdCategoryQuery request, CancellationToken cancellationToken)
+            {
+                try
+                {
+                    var category = await _unitofWork.categoryRepository.FirstOrDefaultAsync(c => c.Id == request.Id);
+
+                    if (category == null)
+                    {
+                        _logger.LogWarning("Category with ID {Id} was not found.", request.Id);
+                        return new HttpResponse<Category>(HttpStatusCode.NotFound, "Not Found Id");
+                    }
+
+                    _logger.LogInformation("Successfully retrieved category with ID {Id}.", request.Id);
+                    return new HttpResponse<Category>(HttpStatusCode.OK, "Success Operation", category);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "An error occurred while retrieving category with ID {Id}", request.Id);
+                    return new HttpResponse<Category>(HttpStatusCode.InternalServerError, "Something went wrong while processing your request.");
+                }
+            }
+        } }}
+    
+

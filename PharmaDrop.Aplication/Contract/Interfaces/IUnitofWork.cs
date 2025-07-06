@@ -15,5 +15,6 @@ namespace PharmaDrop.Aplication.Contract.Interfaces
         public ICategoryRepository categoryRepository { get; }
 
         public IProductRepository productRepository { get; }
+        public IRefreshTokenRepository refreshTokenRepository { get; }
     }
 }
